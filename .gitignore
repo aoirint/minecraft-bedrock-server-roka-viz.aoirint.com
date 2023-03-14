@@ -1,4 +1,5 @@
 /worlds
 /public
+/build
 /logs
 .htpasswd
