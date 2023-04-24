@@ -1,0 +1,56 @@
+##
+# Basic Settings
+##
+
+server_tokens off;
+
+##
+# Logging Settings
+##
+
+# https://kakakakakku.hatenablog.com/entry/2019/11/25/134646
+log_format json  escape=json '{'
+	'"time": "$time_local",'
+	'"remote_addr": "$remote_addr",'
+	'"host": "$host",'
+	'"remote_user": "$remote_user",'
+	'"status": "$status",'
+	'"server_protocol": "$server_protocol",'
+	'"request_method": "$request_method",'
+	'"request_uri": "$request_uri",'
+	'"request": "$request",'
+	'"body_bytes_sent": "$body_bytes_sent",'
+	'"request_time": "$request_time",'
+	'"upstream_response_time": "$upstream_response_time",'
+	'"http_referer": "$http_referer", '
+	'"http_user_agent": "$http_user_agent",'
+	'"http_x_forwarded_for": "$http_x_forwarded_for",'
+	'"http_x_forwarded_proto": "$http_x_forwarded_proto"'
+'}';
+
+
+##
+# Server Settings
+##
+
+server {
+	server_name _;
+	listen 80 default_server;
+
+	access_log /logs/access.log combined;
+	access_log /logs/access_main.log main;
+	access_log /logs/access_json.log json;
+	error_log /logs/error.log;
+
+	add_header Referrer-Policy same-origin;
+
+	auth_basic "Auth Required";
+	auth_basic_user_file /secrets/minecraft-bedrock-server-roka-viz.htpasswd;
+
+	location / {
+		root /public;
+		try_files $uri $uri/ /index.html;
+
+		send_timeout 3600s;
+	}
+}
